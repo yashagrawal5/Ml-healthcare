@@ -20,7 +20,7 @@ model_heartdisease = pickle.load(open('heartdisease.pkl', 'rb'))
 model_liverdisease = pickle.load(open('liverdisease.pkl', 'rb'))
 model_cancer = pickle.load(open('breastcancer.pkl', 'rb'))
 model_malaria = load_model('malariadisease.h5')
-model_pneumonia = load_model('pneumonia_disease.h5')
+
 
 @app.route('/',methods=['GET'])
 @app.route('/home',methods=['GET'])
@@ -138,22 +138,6 @@ def malariadisease():
         else:
             return render_template('malaria_prediction.html', prediction_text="Great! You don't have Malaria.", image_name= f.filename, title='Malaria Disease')
 
-@app.route('/pneumoniadisease', methods=['GET', 'POST'])
-def pneumoniadisease():
-    if request.method=="GET":
-        return render_template('pneumoniadisease.html', title='Pneumonia Disease')
-    else:
-        f=request.files["file"]
-        basepath = os.path.dirname(__file__)
-        file_path = os.path.join(basepath,'uploads',  secure_filename(f.filename))
-        f.save(file_path)
-
-        prediction = pneumonia_predict(file_path)
-        pred=np.argmax(prediction, axis=1)
-        if pred[0]==1:
-            return render_template('pneumonia_prediction.html', prediction_text="Oops! This Chest X-Ray shows an area of lung inflammation indicating the presence of Pneumonia.", file_name = f.filename, title='Pneumonia Disease')
-        else:
-            return render_template('pneumonia_prediction.html', prediction_text="Great! You don't have Pneumonia.", file_name= f.filename, title='Pneumonia Disease')
 
 
 @app.route('/uploads/<filename>')
