@@ -19,7 +19,7 @@ app = Flask(__name__)
 model_heartdisease = pickle.load(open('heartdisease.pkl', 'rb'))
 model_liverdisease = pickle.load(open('liverdisease.pkl', 'rb'))
 model_cancer = pickle.load(open('breastcancer.pkl', 'rb'))
-model_malaria = load_model('malariadisease.h5')
+
 
 
 @app.route('/',methods=['GET'])
@@ -104,14 +104,6 @@ def breastcancer():
     else:
         return render_template('cancer.html',title='Breast Cancer')
 
-# Image Preprocessing
-def malaria_predict(img_path):
-    img = image.load_img(img_path, target_size=(30, 30, 3))
-    x=image.img_to_array(img)
-    x=x/255
-    x=np.expand_dims(x, axis=0)
-    preds = model_malaria.predict(x)
-    return preds
 
 def pneumonia_predict(img_path):
     img = image.load_img(img_path, target_size=(224, 224))
@@ -122,21 +114,7 @@ def pneumonia_predict(img_path):
     preds = model_pneumonia.predict(x)
     return preds
 
-@app.route('/malariadisease', methods=['GET', 'POST'])
-def malariadisease():
-    if request.method=="GET":
-        return render_template('malariadisease.html', title='Malaria Disease')
-    else:
-        f=request.files["file"]
-        basepath = os.path.dirname(__file__)
-        file_path = os.path.join(basepath,'uploads',  secure_filename(f.filename))
-        f.save(file_path)
 
-        prediction = malaria_predict(file_path)
-        if prediction[0][0]>=0.5:
-            return render_template('malaria_prediction.html', prediction_text="Oops! The cell image indicates the presence of Malaria.", image_name = f.filename, title='Malaria Disease')
-        else:
-            return render_template('malaria_prediction.html', prediction_text="Great! You don't have Malaria.", image_name= f.filename, title='Malaria Disease')
 
 
 
