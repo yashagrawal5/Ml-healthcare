@@ -9,4 +9,4 @@ matplotlib>=1.4.3
 pandas>=0.19
 jsonify
 requests
-tensorflow==1.14
+tensorflow-cpu
